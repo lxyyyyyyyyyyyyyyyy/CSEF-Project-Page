@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f5">
+  <meta name="description" content="CSEF：基于条件状态编辑场的低照度图像增强。了解方法、论文实验结果，并体验真实输出的交互式前后对比。">
+  <link rel="canonical" href="https://lxyyyyyyyyyyyyyyyy.github.io/CSEF-Project-Page/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CSEF · 低照度图像增强项目展示">
+  <meta property="og:description" content="探索条件状态编辑场的方法、实验结果与真实图像增强对比。">
+  <meta property="og:url" content="https://lxyyyyyyyyyyyyyyyy.github.io/CSEF-Project-Page/">
+  <meta property="og:image" content="https://lxyyyyyyyyyyyyyyyy.github.io/CSEF-Project-Page/assets/sample-csef.png">
+  <title>CSEF · Conditional State Edit Field</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳转到正文</a>
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#top" aria-label="CSEF 首页"><span class="brand-mark" aria-hidden="true">✦</span><span>CSEF<span class="brand-dot">.</span></span></a>
+      <nav aria-label="主导航">
+        <a href="#overview">概览</a><a href="#method">方法</a><a href="#results">实验</a><a href="#demo">体验</a>
+      </nav>
+      <a class="nav-paper" href="paper.pdf" target="_blank" rel="noopener">阅读论文 <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid page-width">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> COMPUTER VISION / COURSE PROJECT</p>
+          <h1>让低照度增强<br><em>看得见，也讲得清。</em></h1>
+          <p class="hero-subtitle">Conditional State Edit Field for Low-Light Image Enhancement</p>
+          <p class="hero-description">CSEF 用像素状态与可解释的编辑原子，构造逐像素编辑场。模型将亮度、色彩、白平衡、细节与降噪交给明确的渲染操作，而非直接生成整张 RGB 图像。</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#demo">体验图像对比 <span aria-hidden="true">↗</span></a>
+            <a class="button button-outline" href="paper.pdf" target="_blank" rel="noopener">论文 PDF <span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="authors"><strong>Yilang Liao</strong><span>·</span><strong>Xinyao Li</strong><span>·</span><strong>Ruqing Lv</strong><br><small>South China University of Technology</small></p>
+        </div>
+        <div class="hero-media">
+          <div class="hero-media-top"><span class="live-dot"></span> REAL MODEL OUTPUT <span>01 / 01</span></div>
+          <div class="comparison" data-comparison style="--position: 52%" aria-label="低照度原图与 CSEF 输出对比">
+            <img class="comparison-base" src="assets/sample-csef.png" alt="CSEF 增强后的室内场景：玻璃柜中的瓷器与物品变得清晰" width="600" height="400">
+            <div class="comparison-before"><img src="assets/sample-low.png" alt="" width="600" height="400"></div>
+            <div class="comparison-divider" aria-hidden="true"><span>↔</span></div>
+            <span class="image-label image-label-left">输入 · LOW</span><span class="image-label image-label-right">CSEF · OUTPUT</span>
+            <input class="comparison-range" type="range" min="0" max="100" value="52" aria-label="拖动查看增强前后对比">
+          </div>
+          <div class="hero-media-bottom"><span>拖动分割线，观察真实输出</span><span>LOL-v2 样例</span></div>
+        </div>
+      </div>
+      <div class="hero-foot page-width"><span>SCROLL TO EXPLORE</span><span class="foot-line"></span><span>01 — 05</span></div>
+    </section>
+
+    <section class="section intro-section" id="overview">
+      <div class="page-width intro-grid">
+        <div><p class="section-kicker">01 / PROJECT OVERVIEW</p><h2>从“黑箱增强”<br>到<span>可追踪的编辑。</span></h2></div>
+        <div class="intro-right"><p>低照度图像往往同时存在曝光不足、颜色偏移、细节丢失与暗部噪声。CSEF 先描述每个像素的状态，再从图像中生成 16 个编辑原子，以软匹配方式组合成局部编辑参数。</p><p>这样，每个输出像素都能追溯到所匹配的原子与具体操作；在推理时，也可直接调节不同操作的强度。</p><div class="fact-row"><div><strong>8<span>D</span></strong><small>像素状态</small></div><div><strong>16</strong><small>条件编辑原子</small></div><div><strong>7<span>D</span></strong><small>逐像素编辑场</small></div></div></div>
+      </div>
+      <div class="page-width figure-shell concept-shell"><img src="assets/concept.png" alt="论文图 1：从低照度输入，经像素与编辑原子匹配，生成七维编辑场，最后得到增强图像" loading="lazy"><p>论文图 1 · CSEF 的状态匹配与显式编辑流程</p></div>
+    </section>
+
+    <section class="section method-section" id="method">
+      <div class="page-width">
+        <div class="section-head"><div><p class="section-kicker">02 / THE METHOD</p><h2>一条可解释的<br><span>增强路径。</span></h2></div><p>像素状态 → 原子匹配 → 编辑参数 → 图像操作 → 增强结果。控制器决定“编辑什么”，解析渲染器负责“怎样编辑”。</p></div>
+        <div class="method-steps">
+          <article><span class="step-num">01</span><div class="step-icon state-icon" aria-hidden="true"><i></i><i></i><i></i></div><h3>构建像素状态</h3><p>提取 8 维状态，包含相对与绝对亮度、色度、梯度、局部对比度、纹理和噪声。</p></article>
+          <article><span class="step-num">02</span><div class="step-icon atoms-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h3>生成编辑原子</h3><p>轻量控制器通过分布池化提取图像上下文，预测 16 个带有状态中心与编辑幅度的原子。</p></article>
+          <article><span class="step-num">03</span><div class="step-icon field-icon" aria-hidden="true"><i></i></div><h3>逐像素软匹配</h3><p>每个像素按状态相似度匹配原子，合成为 7 维空间编辑场，适应不同区域的退化。</p></article>
+          <article><span class="step-num">04</span><div class="step-icon render-icon" aria-hidden="true">✦</div><h3>解析渲染</h3><p>按编辑场执行曝光、色彩、白平衡、细节、降噪与阴影提升，输出增强图像。</p></article>
+        </div>
+        <figure class="figure-shell architecture-shell"><img src="assets/architecture.png" alt="论文图 2：CSEF 控制器、像素原子匹配和渲染器的完整系统架构" loading="lazy"><figcaption>论文图 2 · 控制器与解析渲染器的完整架构</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section results-section" id="results">
+      <div class="page-width">
+        <div class="section-head"><div><p class="section-kicker">03 / EVALUATION</p><h2>实验结果，<br><span>有据可查。</span></h2></div><p>以下数字取自论文表 1。对比涉及 LOL-v2 Real 与 Synthetic 两组数据；图像质量和推理速度应结合具体数据集一起阅读。</p></div>
+        <div class="metric-grid">
+          <article class="metric-card"><span>LOL-v2 Synthetic</span><strong>22.1841 <small>dB</small></strong><p>PSNR · 对比方法中最高</p></article>
+          <article class="metric-card"><span>LOL-v2 Synthetic</span><strong>0.8625</strong><p>SSIM · 对比方法中最高</p></article>
+          <article class="metric-card"><span>LOL-v2 Real</span><strong>143.46 <small>FPS</small></strong><p>论文报告的推理速度</p></article>
+          <article class="metric-card"><span>MODEL SIZE</span><strong>124,257</strong><p>可训练参数量</p></article>
+        </div>
+        <div class="result-layout"><div class="result-copy"><h3>性能与边界</h3><p>在 LOL-v2 Synthetic 上，CSEF 的 PSNR、SSIM 和 MAE 均优于论文中列出的对比方法。在 LOL-v2 Real 上，MIRNet、Retinexformer 等模型的重建指标更高；CSEF 则保持较小的参数量与较高的推理速度。</p><div class="mini-table" role="region" aria-label="LOL-v2 结果表" tabindex="0"><table><thead><tr><th>方法</th><th>Real PSNR ↑</th><th>Syn. PSNR ↑</th><th>Real FPS ↑</th><th>参数量</th></tr></thead><tbody><tr class="highlight"><th>CSEF</th><td>20.4338</td><td>22.1841</td><td>143.46</td><td>124,257</td></tr><tr><th>MIRNet</th><td>28.0960</td><td>15.7555</td><td>1.35</td><td>31,787,419</td></tr><tr><th>Retinexformer</th><td>28.9768</td><td>16.1899</td><td>10.39</td><td>1,605,701</td></tr><tr><th>Zero-DCE</th><td>18.0588</td><td>17.7564</td><td>112.59</td><td>79,416</td></tr></tbody></table></div><p class="table-note">论文表 1 节选；完整 SSIM、MAE 与其他方法见论文 PDF。</p></div><div class="result-figure"><img src="assets/comparison-real-a.png" alt="论文图 3 的图像对比：输入、目标图、CSEF 及多个基线方法" loading="lazy"><p>论文图 3 · LOL-v2 视觉对比</p></div></div>
+      </div>
+    </section>
+
+    <section class="section explore-section" id="explore">
+      <div class="page-width"><div class="section-head"><div><p class="section-kicker">04 / MORE THAN LOW LIGHT</p><h2>一套编辑机制，<br><span>多种应用场景。</span></h2></div><p>论文进一步研究了推理时的参数可控性，以及向水下图像增强和颜色增强任务的迁移能力。</p></div>
+        <div class="explore-grid"><article class="explore-card"><div class="explore-image"><img src="assets/control-exposure.png" alt="同一模型权重在不同亮度参数下的输出变化" loading="lazy"></div><div class="explore-caption"><span>01 / CONTROLLABILITY</span><h3>推理时可调节</h3><p>不重新训练模型，改变渲染系数即可得到不同的曝光与白平衡效果。</p></div></article><article class="explore-card"><div class="explore-image"><img src="assets/underwater-a.png" alt="水下图像增强的输入、目标、CSEF 输出与对比方法" loading="lazy"></div><div class="explore-caption"><span>02 / TRANSFER</span><h3>迁移至水下增强</h3><p>论文中，水下实验 PSNR 从原始输入的 17.7596 提升至 20.1732 dB。</p></div></article><article class="explore-card"><div class="explore-image"><img src="assets/transfer-color.png" alt="颜色增强实验的输入、目标、CSEF 输出与对比方法" loading="lazy"></div><div class="explore-caption"><span>03 / TRANSFER</span><h3>迁移至颜色增强</h3><p>调整编辑维度后，CSEF edit12 在颜色增强实验中取得 22.9149 dB PSNR。</p></div></article></div>
+      </div>
+    </section>
+
+    <section class="section demo-section" id="demo"><div class="page-width demo-grid"><div><p class="section-kicker">05 / EXPLORE THE RESULTS</p><h2>亲手探索<br><span>增强效果。</span></h2><p>上方交互图展示 CSEF 模型生成的真实结果。拖动分割线，可直接比较同一张图像的原始输入与增强输出。</p><p>结合方法介绍、实验指标与视觉对比，了解模型在低照度图像增强中的表现，以及可控编辑与任务迁移的研究结果。</p><div class="demo-actions"><a class="button button-primary" href="#top">查看交互对比 <span aria-hidden="true">↗</span></a><a class="button button-outline" href="paper.pdf" target="_blank" rel="noopener">阅读完整论文 <span aria-hidden="true">↗</span></a></div></div><div class="terminal-card"><div class="terminal-top"><span class="terminal-dots"><i></i><i></i><i></i></span> PROJECT HIGHLIGHTS <span>CSEF</span></div><div class="terminal-body"><p><span>01</span> 真实模型输出 · 前后对比</p><p><span>02</span> 像素状态 · 条件编辑原子</p><p><span>03</span> 轻量控制器 · 解析渲染</p><p><span>04</span> 可控编辑 · 多场景迁移</p></div><p class="terminal-foot">查看上方实验结果，或阅读论文了解完整方法与评估。</p></div></div></section>
+  </main>
+  <footer class="site-footer"><div class="page-width footer-grid"><div><span class="footer-brand">CSEF<span>.</span></span><p>Conditional State Edit Field for Low-Light Image Enhancement</p></div><div><a href="paper.pdf" target="_blank" rel="noopener">论文 PDF ↗</a><a href="#results">实验结果 ↑</a><a href="#top">回到顶部 ↑</a></div></div><div class="page-width footer-line"><span>Yilang Liao · Xinyao Li · Ruqing Lv</span><span>South China University of Technology</span></div></footer>
+</body>
+</html>
